@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.toggle-example {
+  margin-top: 40px;
+}
+
+.toggle-machine {
+  border: 1px solid grey;
+  padding: 10px;
+}

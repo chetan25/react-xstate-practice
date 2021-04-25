@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+---
+title: XState in context with React.
+excerpt: A simple effort to learn XState in context with React, by creating sample components and showing the difference.
+Tools: ['React', 'XState']
+---
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+# React and XState
 
-In the project directory, you can run:
+This repo contains some examples showing difference between XState and normal React state workflow. To start with I have created few Toggle components that are loaded in the main App and have different ways to manage internal state. 
 
-### `npm start`
+> There are lots of comments in the code explaining the reasoning :)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Different ways to Handle State
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Basically all the Toggle component have the same UI, but different ways to handle the toggle state. The state can basically have 3 values
+- active - when the toggle is on
+- inactive - when the toggle is off
+- pending - when we press from inactive state to got to active state. This middle state mimics a async action like a http request or callback, and once the action is complete fires the action to change state to active.
+  
 
-### `npm test`
+#### React useState
+The `ToggleReactState` component uses `useState` to manage the states, and you can see how this could lead to issues if our state gets complicated or if we have multiple states to handle between active and inactive.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### React Reducer(Using State Model Approach)
+The `ToggleReactReducer` component uses `useReducer` to manage state. This component shows two ways to use the reducer function.
+- First is the classic Switch case approach. But there is a difference in how we have use the switched case. In normal reducer we would switch between the `action type` and then generate our new state, but in State model approach we switch between the `states` and define all the action that can happen when the component is in that state.
+- Second approach is swapping the Switch case with an Object. In this we define an Object equivalent to the XState machine object, which basically defines what actions we can take in a state.
 
-### `npm run build`
+#### React and XState
+The `ToggleReactXState` component uses XState machine model to handle the state. In this we create a machine object that maps the all action that can be taken when in a particular state in the component. Then we pass this machine Object to the `useMachine` hook that returns us 3 things
+- `state` - this is the state object, that contains the current state, context(extended state) and bunch of other properties.
+-  `send` - a function to fire action on the machine.
+-  `service` - this is the running instance of that state machine, and it's like an obsevable and we could subscribe to it to get the values.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Spawning  Child State Machine from Main State Machine
+We can spawn dynamic state machine for a State machine. A example of this is `SimpleXStateToggle` component. This component takes in the reference to the state machine to be consumed and is generated from the main App by clicking the button. The Main app uses the `spawn` function and passes it the state machine object to generate the new state machine instance and returns a reference of the newly created instance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
